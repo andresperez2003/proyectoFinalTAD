@@ -66,4 +66,3 @@ class ComboBox():
         render_text = font.render(self.selected_option, True, self.text_selected_option_color, None)
         self.screen.blit(render_text, (self.rect.x + 10, self.rect.y + (self.rect.height - render_text.get_height())/2))
     
-

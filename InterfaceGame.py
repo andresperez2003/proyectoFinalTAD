@@ -76,13 +76,23 @@ class Interface:
             ("Quilladin", self.quilladinImg),
             ("Roserade", self.roseradeImg)]
         self.listPokemon=[]
+
+        self.operaciones={
+            1:self.instSll.crear_node_sll_ends,
+            2:self.instSll.create_node_sll_unshift,
+            4:self.instSll.shift_node_sll,
+            5:self.instSll.delete_node_sll_pop
+        }
+
+
+
         #botones
         self.btnAceptar= Rect(350,330,70,25)
         self.opcion=0
         self.touchUser = False
 
         self.screen.fill(self.GREY)
-        self.combo = ComboBox(self.screen,["Agregar al principio","Agregar al final","Agregar en una posicion","Eliminar al inicio","Eliminar al final","Eliminar en una posicion"],self.combo_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
+        self.combo = ComboBox(self.screen,["Agregar al final","Agregar al principio","Agregar en una posicion","Eliminar al inicio","Eliminar al final","Eliminar en una posicion"],self.combo_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
         self.comboIndice = ComboBox(self.screen,["Opcion 1","Opcion 2"],self.comboIndice_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
 
 
@@ -107,6 +117,7 @@ class Interface:
                 self.add_other_pokemons()
                 event.wait()
                 self.opcion= self.combo.getIndex()
+
             self.draw_list_pokemons()
             self.imprimir_pokemones()
             self.instSll.show_list()
@@ -210,39 +221,44 @@ class Interface:
 
 
     def add_other_pokemons(self):
-        
-        #self.screen.blit(texto,(565+(aceptar.width-texto.get_width())/2,130+(aceptar.height-texto.get_height())/2))
-        if(self.otherBalbausur.collidepoint(mouse.get_pos())) and mouse.get_pressed()[0]:
-                    if self.opcion==1:
-                        self.instSll.create_node_sll_unshift(self.pokedex[0][0])
-                    print(self.listPokemon)
-        elif self.otherCharmander.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion==1 :
-                    self.instSll.create_node_sll_unshift(self.pokedex[1][0])
-                print(self.listPokemon)
-        elif self.otherSquirtle.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion==1 :
-                    self.instSll.create_node_sll_unshift(self.pokedex[2][0])
-                print(self.listPokemon)
-        elif self.bombirdier.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-            if self.opcion ==1 :
-                self.instSll.create_node_sll_unshift(self.pokedex[3][0])
-                print(self.listPokemon)
-        elif self.charjabug.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-            if self.opcion==1 :
-                self.instSll.create_node_sll_unshift(self.pokedex[4][0])
-        elif self.cloyster.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-            if self.opcion==1 :
-                self.instSll.create_node_sll_unshift(self.pokedex[5][0])
-        elif self.furfrou.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-            if self.opcion == 1 :
-                self.instSll.create_node_sll_unshift(self.pokedex[6][0])
-        elif self.quilladin.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-            if self.opcion == 1:
-                self.instSll.create_node_sll_unshift(self.pokedex[7][0]) 
-        elif self.roserade.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-            if self.opcion == 1:
-                self.instSll.create_node_sll_unshift(self.pokedex[8][0])
+        if self.opcion is not -1:
+            event.wait
+            if(self.otherBalbausur.collidepoint(mouse.get_pos())) and mouse.get_pressed()[0]:
+                if self.opcion == 1: self.instSll.crear_node_sll_ends(self.pokedex[0][0])
+                elif self.opcion == 2: self.instSll.create_node_sll_unshift(self.pokedex[0][0])
+
+            elif self.otherCharmander.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                if self.opcion == 1: self.instSll.crear_node_sll_ends(self.pokedex[1][0])
+                elif self.opcion == 2: self.instSll.create_node_sll_unshift(self.pokedex[1][0])
+
+            elif self.otherSquirtle.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                if self.opcion == 1: self.instSll.crear_node_sll_ends(self.pokedex[2][0])
+                elif self.opcion == 2: self.instSll.create_node_sll_unshift(self.pokedex[2][0])
+
+            elif self.bombirdier.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                if self.opcion == 1: self.instSll.crear_node_sll_ends(self.pokedex[3][0])
+                elif self.opcion == 2: self.instSll.create_node_sll_unshift(self.pokedex[3][0])
+
+            elif self.charjabug.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                if self.opcion == 1: self.instSll.crear_node_sll_ends(self.pokedex[4][0])
+                elif self.opcion == 2: self.instSll.create_node_sll_unshift(self.pokedex[4][0])
+
+            elif self.cloyster.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                if self.opcion == 1: self.instSll.crear_node_sll_ends(self.pokedex[5][0])
+                elif self.opcion == 2: self.instSll.create_node_sll_unshift(self.pokedex[5][0])
+
+            elif self.furfrou.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                if self.opcion == 1: self.instSll.crear_node_sll_ends(self.pokedex[6][0])
+                elif self.opcion == 2: self.instSll.create_node_sll_unshift(self.pokedex[6][0])
+
+            elif self.quilladin.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                if self.opcion == 1: self.instSll.crear_node_sll_ends(self.pokedex[7][0])
+                elif self.opcion == 2: self.instSll.create_node_sll_unshift(self.pokedex[7][0])
+
+            elif self.roserade.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                if self.opcion == 1: self.instSll.crear_node_sll_ends(self.pokedex[8][0])
+                elif self.opcion == 2: self.instSll.create_node_sll_unshift(self.pokedex[8][0])
+
 
 
 
