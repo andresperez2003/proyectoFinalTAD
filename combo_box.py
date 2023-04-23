@@ -20,8 +20,10 @@ class ComboBox():
         self.select_dict = {}
         self.selected_index = -1
         self.selected_option = initial_selected_value
+        self.finish=False
     
     def draw(self):
+        
         self.clickOnInitialRect()
         self.clickOutOfCombo()
         self.drawSelectedOption()
@@ -39,6 +41,7 @@ class ComboBox():
     
     def clickOnInitialRect(self):
         if self.rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] == True:
+            self.finish=False
             self.combo_open = True
     
     def clickOutOfCombo(self):
@@ -65,4 +68,5 @@ class ComboBox():
         font = pygame.font.SysFont(self.font_type, self.font_size, True)
         render_text = font.render(self.selected_option, True, self.text_selected_option_color, None)
         self.screen.blit(render_text, (self.rect.x + 10, self.rect.y + (self.rect.height - render_text.get_height())/2))
+        self.finish=True
     
