@@ -223,9 +223,8 @@ class Interface:
     def add_other_pokemons(self):
         if self.opcion>0 and self.opcion<3:
             print("Entra")
-            event.wait()
             if(self.otherBalbausur.collidepoint(mouse.get_pos())) and mouse.get_pressed()[0]:
-                if self.opcion <3 and self.deleteFlag: self.operaciones[self.opcion](self.pokedex[0][0])
+                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[0][0])
                 print("Presiono")
             elif self.otherCharmander.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
                 if self.opcion <3: self.operaciones[self.opcion](self.pokedex[1][0])
