@@ -45,7 +45,7 @@ class Interface:
 
         #Tamaño de lista de pokemones
         self.listPokemons= Rect(60,400,700,90)
-
+        self.pokeName=''
         #Cargando imagenes pokemones iniciales
         self.charmanderImg= image.load('Proyecto_Final_TAD/img/charmander.png')
         self.charmanderImg = transform.scale(self.charmanderImg,(self.charmander.width,self.charmander.height))
@@ -98,10 +98,16 @@ class Interface:
         self.opcion=0
         self.touchUser = False
 
+        #Combobox
         self.screen.fill(self.GREY)
         self.combo = ComboBox(self.screen,["Agregar al principio","Agregar al final","Eliminar primero", "Eliminar ultimo"],self.combo_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
         self.comboIndice = ComboBox(self.screen,["Opcion 1","Opcion 2"],self.comboIndice_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
-
+        
+        #Hover
+        self.hoverPositionX=0
+        self.hovePositionY=0
+        self.hoverWidth=0
+        self.hoverHeigth=0
 
 
     def init_screen(self):
@@ -119,6 +125,7 @@ class Interface:
             else:
                 self.draw_string()
                 self.draw_other_pokemons()
+                self.draw_hover(self.hoverPositionX, self.hovePositionY, self.hoverWidth, self.hoverHeigth)
                 self.combo.draw()
                 self.comboIndice.draw()
                 self.opcion= self.combo.getIndex()    
@@ -221,42 +228,64 @@ class Interface:
 
 
     def add_other_pokemons(self):
-        if self.opcion>0 and self.opcion<3:
+        if self.opcion>0 and self.opcion<3 and not self.combo.combo_open:
             print("Entra")
             if(self.otherBalbausur.collidepoint(mouse.get_pos())) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[0][0])
-                print("Presiono")
+                self.pokeName= self.pokedex[0][0]
+                self.give_valors_hover(self.otherBalbausur.x,self.otherBalbausur.y,self.widthPokemon,self.heigthPokemon)
+                self.deleteFlag=True
+
             elif self.otherCharmander.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[1][0])
+                self.pokeName= self.pokedex[1][0]
+                self.give_valors_hover(self.otherCharmander.x,self.otherCharmander.y,self.widthPokemon,self.heigthPokemon)
+                self.deleteFlag=True
 
             elif self.otherSquirtle.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[2][0])
+                self.pokeName= self.pokedex[2][0]
+                self.give_valors_hover(self.otherSquirtle.x,self.otherSquirtle.y,self.widthPokemon,self.heigthPokemon)
+                self.deleteFlag=True
 
             elif self.bombirdier.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[3][0])
+                self.pokeName= self.pokedex[3][0]
+                self.give_valors_hover(self.bombirdier.x,self.bombirdier.y,self.widthPokemon,self.heigthPokemon)
+                self.deleteFlag=True
 
-            elif self.charjabug.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion > 0  and self.opcion<3 and not self.combo.combo_open: self.operaciones[self.opcion](self.pokedex[4][0])
+            elif self.charjabug.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0] and  not self.combo.combo_open:
+                self.pokeName= self.pokedex[4][0]
+                self.give_valors_hover(self.charjabug.x,self.charjabug.y,self.widthPokemon,self.heigthPokemon)
+                self.deleteFlag=True
 
             elif self.cloyster.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[5][0])
+                self.pokeName= self.pokedex[5][0]
+                self.give_valors_hover(self.cloyster.x,self.cloyster.y,self.widthPokemon,self.heigthPokemon)
+                self.deleteFlag=True
 
             elif self.furfrou.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[6][0])
+                self.pokeName= self.pokedex[6][0]
+                self.give_valors_hover(self.furfrou.x,self.furfrou.y,self.widthPokemon,self.heigthPokemon)
+                self.deleteFlag=True
 
             elif self.quilladin.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[7][0])
+                self.pokeName= self.pokedex[7][0]
+                self.give_valors_hover(self.quilladin.x,self.quilladin.y,self.widthPokemon,self.heigthPokemon)
+                self.deleteFlag=True
 
             elif self.roserade.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[8][0])
-        if self.opcion>=3:
+                self.pokeName= self.pokedex[8][0]
+                self.give_valors_hover(self.roserade.x,self.roserade.y,self.widthPokemon,self.heigthPokemon)
+                self.deleteFlag=True
+
+        self.draw_hover(self.hoverPositionX, self.hovePositionY, self.hoverWidth, self.hoverHeigth)
+        if self.opcion>=3 and self.opcion<=4:
             if self.deleteFlag:
                 print("Entra")
                 self.operaciones[self.opcion]()
                 self.deleteFlag=False
 
-
-
+    def seleccionar_pokemon(self):
+        for name in self.pokedex:
+            if self.pokeName == name[0] and self.deleteFlag:
+                self.operaciones[self.opcion](name[0])
 
     def imprimir_pokemones(self):
             self.valor=5
@@ -292,9 +321,22 @@ class Interface:
     def press_aceptar(self):
         event.wait()
         if(self.btnAceptar.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]):
-            self.deleteFlag=True
+            if(self.opcion>0 and self.opcion<3):
+                self.seleccionar_pokemon()
+                self.deleteFlag=False
+            else: self.deleteFlag=True
+            self.give_valors_hover(0,0,0,0)
             print("Presiono aceptar")
+
+    def draw_hover(self, positionX, positionY, width, heigth):
+        self.rect_hover= Rect(positionX,positionY, width, heigth)
+        draw.rect(self.screen,self.RED,self.rect_hover,2)
     
+    def give_valors_hover(self,x,y,width,heigth):
+        self.hoverPositionX=x-5
+        self.hovePositionY=y-5
+        self.hoverWidth=width+10
+        self.hoverHeigth=heigth+10
 
 
 
