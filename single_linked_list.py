@@ -202,3 +202,8 @@ class SingleLinkedList:
                 previous_node.next = new_node
                 new_node.next = actual_node_sll
                 self.length+=1
+
+    def update_node_value(self, index, new_value):
+        search_node = self.get_node(index)
+        if search_node != None:
+            search_node.value = new_value

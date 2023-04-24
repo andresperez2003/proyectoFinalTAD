@@ -91,7 +91,7 @@ class Interface:
             6:self.instSll.delete_list,
             7:self.instSll.remove_node,
             8:self.instSll.add_node,
-            9:""" Actualizar elemento en una posicion especifica """,
+            9:self.instSll.update_node_value,
             10:""" Comprobar si la lista simplemente esta vacio si el usuario desea eliminar """
         }
 
@@ -103,7 +103,7 @@ class Interface:
         self.indices =[]
         #Combobox
         self.screen.fill(self.GREY)
-        self.combo = ComboBox(self.screen,["Agregar al principio","Agregar al final","Eliminar primero", "Eliminar ultimo","Invertir","Eliminar todos","Eliminar por posicion","Agregar en una posicion"],self.combo_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
+        self.combo = ComboBox(self.screen,["Agregar al principio","Agregar al final","Eliminar primero", "Eliminar ultimo","Invertir","Eliminar todos","Eliminar por posicion","Agregar en una posicion", "Actualizar pokemon"],self.combo_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
         self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
         self.indice=0
         #Hover
@@ -229,7 +229,7 @@ class Interface:
 
 
     def add_other_pokemons(self):
-        if (self.opcion>0 and self.opcion<3) or self.opcion==8:
+        if (self.opcion>0 and self.opcion<3) or self.opcion==8 or self.opcion==9:
             if not self.combo.combo_open:
                 if(self.otherBalbausur.collidepoint(mouse.get_pos())) and mouse.get_pressed()[0]:
                     self.pokeName= self.pokedex[0][0]
@@ -293,6 +293,10 @@ class Interface:
             self.operaciones[self.opcion](self.indice,self.pokeName)
             self.indices.append(str(self.instSll.length))
 
+        #Actualizar pokemon
+        if self.indice >0 and self.opcion==9:
+            self.operaciones[self.opcion](self.indice,self.pokeName)
+
         #Agregar pokemones
         if self.opcion> 0 and self.opcion<3:
             for name in self.pokedex:
@@ -337,7 +341,7 @@ class Interface:
     def press_aceptar(self):
         event.wait()
         if(self.btnAceptar.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]):
-            if((self.opcion>0 and self.opcion<3) or self.opcion==7 or self.opcion ==8):
+            if((self.opcion>0 and self.opcion<3) or self.opcion>=7 and self.opcion <=9):
                 self.seleccionar_pokemon()
                 self.deleteFlag=False
             else: self.deleteFlag=True
