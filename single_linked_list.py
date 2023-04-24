@@ -146,3 +146,59 @@ class SingleLinkedList:
             print(f'Actualizando el valor del nodo ... \n {search_node.value} por {new_value}')
         else:
             print("No se encontro el nodo")
+
+    def reverse(self):
+        if self.length > 1:
+            aux_head = self.tail
+            aux_tail = self.head
+            if self.length == 2:
+                self.head = aux_head
+                self.head.next = aux_tail
+                self.tail = aux_tail
+                self.tail.next = None
+                return
+            
+            current_node = self.tail
+            for i in range (1, self.length - 1):
+                node = self.get_node(self.length - i)
+                current_node.next = node
+                current_node = node
+            node.next = aux_tail
+            self.head = aux_head
+            self.tail = aux_tail
+            self.tail.next = None
+
+    def delete_list(self):
+        if self.head != None:
+            self.head.next = None
+            self.head = None
+            self.tail = None
+            self.length = 0
+
+    def remove_node(self,index):
+        if index == 1:
+            self.shift_node_sll()
+        elif index == self.length:
+            self.delete_node_sll_pop()
+        else:
+            remove_node_sll = self.get_node(index)
+            if remove_node_sll != None:
+                previous_node = self.get_node(index - 1)
+                previous_node.next = remove_node_sll.next
+                remove_node_sll.next = None
+                self.length-=1
+
+    def add_node(self, index, value):
+        # Pedir valor del nodo
+        if index == 1:
+            self.create_node_sll_unshift(value)
+        elif index == self.length:
+            self.crear_node_sll_ends(value)
+        else:
+            new_node = self.Node(value)
+            actual_node_sll = self.get_node(index)
+            if actual_node_sll != None:
+                previous_node = self.get_node(index - 1)
+                previous_node.next = new_node
+                new_node.next = actual_node_sll
+                self.length+=1
