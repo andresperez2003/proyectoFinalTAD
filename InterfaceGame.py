@@ -29,7 +29,7 @@ class Interface:
         self.otherBalbausur=Rect(315, 240, self.widthPokemon,self.heigthPokemon)
         self.otherCharmander=Rect(380,240, self.widthPokemon, self.heigthPokemon)
         self.otherSquirtle=Rect(455, 240, self.widthPokemon, self.heigthPokemon)
-        self.deleteFlag=False
+        self.deleteFlag=True
 
         self.roserade = Rect(195,170,self.widthPokemon,self.heigthPokemon)
         self.charjabug= Rect(265,170,self.widthPokemon,self.heigthPokemon)
@@ -38,14 +38,14 @@ class Interface:
         self.quilladin = Rect(475,170,self.widthPokemon,self.heigthPokemon)
         self.bombirdier= Rect(545,170,self.widthPokemon,self.heigthPokemon)
         self.combo_rect= Rect(220,90,250,50)
-        self.comboIndice_rect = Rect(530,90,250,50)
+        self.comboIndice_rect = Rect(530,90,100,50)
         self.screen = display.set_mode(self.size)
         self.instSll = SingleLinkedList()
         self.controlNoPress= True
 
         #Tamaño de lista de pokemones
         self.listPokemons= Rect(60,400,700,90)
-
+        self.pokeName=''
         #Cargando imagenes pokemones iniciales
         self.charmanderImg= image.load('Proyecto_Final_TAD/img/charmander.png')
         self.charmanderImg = transform.scale(self.charmanderImg,(self.charmander.width,self.charmander.height))
@@ -65,6 +65,10 @@ class Interface:
         self.bombirdierImg = transform.scale(self.bombirdierImg,(self.bombirdier.width,self.bombirdier.height))
         self.furfrouImg= image.load('Proyecto_Final_TAD/img/furfrou.png')
         self.furfrouImg = transform.scale(self.furfrouImg,(self.furfrou.width,self.furfrou.height))
+        self.background = image.load('Proyecto_Final_TAD/img/fondo.jpg')
+        self.background = transform.scale(self.background,self.size)
+
+
 
         self.pokedex= [
             ("Balbausur",self.balbausurImg),
@@ -83,25 +87,30 @@ class Interface:
             2:self.instSll.crear_node_sll_ends,
             3:self.instSll.shift_node_sll,
             4:self.instSll.delete_node_sll_pop,
-            5:""" Invertir lista """,
-            6:""" Eliminar todos """,
-            7:""" Eliminar en una posicion especifica """,
-            8:""" Insertar en una posicion especifica """,
-            9:""" Actualizar elemento en una posicion especifica """,
+            5:self.instSll.reverse,
+            6:self.instSll.delete_list,
+            7:self.instSll.remove_node,
+            8:self.instSll.add_node,
+            9:self.instSll.update_node_value,
             10:""" Comprobar si la lista simplemente esta vacio si el usuario desea eliminar """
         }
-
 
 
         #botones
         self.btnAceptar= Rect(350,330,70,25)
         self.opcion=0
         self.touchUser = False
-
+        self.indices =[]
+        #Combobox
         self.screen.fill(self.GREY)
-        self.combo = ComboBox(self.screen,["Agregar al principio","Agregar al final","Eliminar primero", "Eliminar ultimo"],self.combo_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
-        self.comboIndice = ComboBox(self.screen,["Opcion 1","Opcion 2"],self.comboIndice_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
-
+        self.combo = ComboBox(self.screen,["Agregar al principio","Agregar al final","Eliminar primero", "Eliminar ultimo","Invertir","Eliminar todos","Eliminar por posicion","Agregar en una posicion", "Actualizar pokemon"],self.combo_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
+        self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
+        self.indice=0
+        #Hover
+        self.hoverPositionX=0
+        self.hovePositionY=0
+        self.hoverWidth=0
+        self.hoverHeigth=0
 
 
     def init_screen(self):
@@ -112,22 +121,25 @@ class Interface:
                 if e.type == QUIT:
                     sys.exit()
             draw.rect(self.screen,(255,255,255),(0,0,800,520))
+                    #Fondo
+            """ self.screen.blit(self.background,(0,0)) """
             if(not self.touchUser):
                 self.draw_begin_pokemons()
                 self.draw_string()
                 self.add_begin_pokemon_end()
+                
             else:
                 self.draw_string()
                 self.draw_other_pokemons()
+                self.add_other_pokemons()
                 self.combo.draw()
                 self.comboIndice.draw()
-                self.opcion= self.combo.getIndex()    
-                self.add_other_pokemons()
+                self.opcion= self.combo.getIndex()  
+                self.indice = self.comboIndice.getIndex()  
                 self.draw_buttons()
-                self.press_aceptar()
+            self.press_aceptar()              
             self.draw_list_pokemons()
             self.imprimir_pokemones()
-            self.instSll.show_list()
             display.flip()
 
         
@@ -200,64 +212,101 @@ class Interface:
         self.screen.blit(texto,(350+(self.btnAceptar.width-texto.get_width())/2,330+(self.btnAceptar.height-texto.get_height())/2))
 
     def add_begin_pokemon_end(self):
-        event.wait()
-        #self.screen.blit(texto,(565+(aceptar.width-texto.get_width())/2,130+(aceptar.height-texto.get_height())/2))
-        if(self.balbausur.collidepoint(mouse.get_pos())):
-                if(mouse.get_pressed()[0]):
-                    #self.screen.blit(self.pokedex[0][1],(self.listPokemons.x+self.valor,390+(self.listPokemons.height- self.balbausurImg.get_height())/2))
+        if(self.balbausur.collidepoint(mouse.get_pos())) and mouse.get_pressed()[0]:
                     self.touchUser=True
                     self.instSll.create_node_sll_unshift(self.pokedex[0][0])
-                    print(self.listPokemon)
-        elif self.charmander.collidepoint(mouse.get_pos()):
-            if mouse.get_pressed()[0]:
+                    self.indices.append("1")
+        elif self.charmander.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
                 self.touchUser=True
+                self.indices.append("1")
                 self.instSll.create_node_sll_unshift(self.pokedex[1][0])
-                self.touchUser = True
-        elif self.squirtle.collidepoint(mouse.get_pos()):
-            if mouse.get_pressed()[0]:
+        elif self.squirtle.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
                 self.instSll.create_node_sll_unshift(self.pokedex[2][0])
                 self.touchUser=True
+                self.indices.append("1")
+            
                 
 
 
     def add_other_pokemons(self):
-        if self.opcion>0 and self.opcion<3:
-            print("Entra")
-            if(self.otherBalbausur.collidepoint(mouse.get_pos())) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[0][0])
-                print("Presiono")
-            elif self.otherCharmander.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[1][0])
+        if (self.opcion>0 and self.opcion<3) or self.opcion==8 or self.opcion==9:
+            if not self.combo.combo_open:
+                if(self.otherBalbausur.collidepoint(mouse.get_pos())) and mouse.get_pressed()[0]:
+                    self.pokeName= self.pokedex[0][0]
+                    self.give_valors_hover(self.otherBalbausur.x,self.otherBalbausur.y,self.widthPokemon,self.heigthPokemon)
+                    self.deleteFlag=True
+                elif self.otherCharmander.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                    self.pokeName= self.pokedex[1][0]
+                    self.give_valors_hover(self.otherCharmander.x,self.otherCharmander.y,self.widthPokemon,self.heigthPokemon)
+                    self.deleteFlag=True
 
-            elif self.otherSquirtle.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[2][0])
+                elif self.otherSquirtle.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                    self.pokeName= self.pokedex[2][0]
+                    self.give_valors_hover(self.otherSquirtle.x,self.otherSquirtle.y,self.widthPokemon,self.heigthPokemon)
+                    self.deleteFlag=True
 
-            elif self.bombirdier.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[3][0])
+                elif self.bombirdier.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                    self.pokeName= self.pokedex[3][0]
+                    self.give_valors_hover(self.bombirdier.x,self.bombirdier.y,self.widthPokemon,self.heigthPokemon)
+                    self.deleteFlag=True
 
-            elif self.charjabug.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion > 0  and self.opcion<3 and not self.combo.combo_open: self.operaciones[self.opcion](self.pokedex[4][0])
+                elif self.charjabug.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                    self.pokeName= self.pokedex[4][0]
+                    self.give_valors_hover(self.charjabug.x,self.charjabug.y,self.widthPokemon,self.heigthPokemon)
+                    self.deleteFlag=True
 
-            elif self.cloyster.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[5][0])
+                elif self.cloyster.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                    self.pokeName= self.pokedex[5][0]
+                    self.give_valors_hover(self.cloyster.x,self.cloyster.y,self.widthPokemon,self.heigthPokemon)
+                    self.deleteFlag=True
 
-            elif self.furfrou.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[6][0])
+                elif self.furfrou.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                    self.pokeName= self.pokedex[6][0]
+                    self.give_valors_hover(self.furfrou.x,self.furfrou.y,self.widthPokemon,self.heigthPokemon)
+                    self.deleteFlag=True
 
-            elif self.quilladin.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[7][0])
+                elif self.quilladin.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                    self.pokeName= self.pokedex[7][0]
+                    self.give_valors_hover(self.quilladin.x,self.quilladin.y,self.widthPokemon,self.heigthPokemon)
+                    self.deleteFlag=True
 
-            elif self.roserade.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                if self.opcion <3: self.operaciones[self.opcion](self.pokedex[8][0])
-        if self.opcion>=3:
+                elif self.roserade.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                    self.pokeName= self.pokedex[8][0]
+                    self.give_valors_hover(self.roserade.x,self.roserade.y,self.widthPokemon,self.heigthPokemon)
+                    self.deleteFlag=True
+                self.draw_hover(self.hoverPositionX,self.hovePositionY,self.hoverWidth,self.hoverHeigth)
+        if self.opcion>=3 and self.opcion<=6:
             if self.deleteFlag:
-                print("Entra")
                 self.operaciones[self.opcion]()
+                self.indices.pop()
+                self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
                 self.deleteFlag=False
 
+    def seleccionar_pokemon(self):
+        #Eliminar en una posicion especifica
+        if self.indice>0 and self.opcion == 7:
+            self.operaciones[self.opcion](self.indice)
+            self.indices.pop()
+        
+        #Agregar en una posicion especifica
+        if self.indice >0 and self.opcion==8:
+            self.operaciones[self.opcion](self.indice,self.pokeName)
+            self.indices.append(str(self.instSll.length))
 
+        #Actualizar pokemon
+        if self.indice >0 and self.opcion==9:
+            self.operaciones[self.opcion](self.indice,self.pokeName)
 
-
+        #Agregar pokemones
+        if self.opcion> 0 and self.opcion<3:
+            for name in self.pokedex:
+                if self.pokeName == name[0] and self.deleteFlag:
+                    self.operaciones[self.opcion](name[0])
+                    self.indices.append(str(self.instSll.length))
+        
+        #Refresacando el combo de los indices
+        self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
+    
     def imprimir_pokemones(self):
             self.valor=5
             for poke in range(1,self.instSll.length+1):
@@ -292,9 +341,24 @@ class Interface:
     def press_aceptar(self):
         event.wait()
         if(self.btnAceptar.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]):
-            self.deleteFlag=True
-            print("Presiono aceptar")
+            if((self.opcion>0 and self.opcion<3) or self.opcion>=7 and self.opcion <=9):
+                self.seleccionar_pokemon()
+                self.deleteFlag=False
+            else: self.deleteFlag=True
+            self.give_valors_hover(0,0,0,0)
+            self.instSll.show_list()
+
+    def draw_hover(self, positionX, positionY, width, heigth):
+        if not self.combo.combo_open:
+            self.rect_hover= Rect(positionX,positionY, width, heigth)
+            draw.rect(self.screen,self.RED,self.rect_hover,2)
     
+    def give_valors_hover(self,x,y,width,heigth):
+        self.hoverPositionX=x-5
+        self.hovePositionY=y-5
+        self.hoverWidth=width+10
+        self.hoverHeigth=heigth+10
+        
 
 
 
