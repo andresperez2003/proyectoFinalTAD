@@ -45,7 +45,7 @@ class Interface:
         self.screen = display.set_mode(self.size)
         self.instSll = SingleLinkedList()
         self.controlNoPress= True
-
+        self.rectGithub=Rect(700,530,40,40)
 
         self.alert = Rect(200,160,400, 100)
         self.btnAlert = Rect(370,220,70,25)
@@ -54,28 +54,28 @@ class Interface:
         self.listPokemons= Rect(60,400,700,90)
         self.pokeName=''
         #Cargando imagenes pokemones iniciales
-        self.charmanderImg= image.load('Proyecto_Final_TAD/img/charmander.png')
+        self.charmanderImg= image.load('img/charmander.png')
         self.charmanderImg = transform.scale(self.charmanderImg,(self.charmander.width,self.charmander.height))
-        self.balbausurImg= image.load('Proyecto_Final_TAD/img/balbasaur.png')
+        self.balbausurImg= image.load('img/balbasaur.png')
         self.balbausurImg = transform.scale(self.balbausurImg,(self.balbausur.width,self.balbausur.height))
-        self.squirtleImg = image.load('Proyecto_Final_TAD/img/squirtle.png')
+        self.squirtleImg = image.load('img/squirtle.png')
         self.squirtleImg= transform.scale(self.squirtleImg,(self.squirtle.width,self.squirtle.height))
-        self.roseradeImg= image.load('Proyecto_Final_TAD/img/roserade.png')
+        self.roseradeImg= image.load('img/roserade.png')
         self.roseradeImg= transform.scale(self.roseradeImg,(self.roserade.width,self.roserade.height))
-        self.charjabugImg= image.load('Proyecto_Final_TAD/img/charjabug.png')
+        self.charjabugImg= image.load('img/charjabug.png')
         self.charjabugImg= transform.scale(self.charjabugImg,(self.charjabug.width,self.charjabug.height))
-        self.cloysterImg = image.load('Proyecto_Final_TAD/img/cloyster.png')
+        self.cloysterImg = image.load('img/cloyster.png')
         self.cloysterImg = transform.scale(self.cloysterImg,(self.cloyster.width,self.cloyster.height))
-        self.quilladinImg = image.load('Proyecto_Final_TAD/img/quilladin.png')
+        self.quilladinImg = image.load('img/quilladin.png')
         self.quilladinImg = transform.scale(self.quilladinImg,(self.quilladin.width,self.quilladin.height))
-        self.bombirdierImg= image.load('Proyecto_Final_TAD/img/bombirdier.png')
+        self.bombirdierImg= image.load('img/bombirdier.png')
         self.bombirdierImg = transform.scale(self.bombirdierImg,(self.bombirdier.width,self.bombirdier.height))
-        self.furfrouImg= image.load('Proyecto_Final_TAD/img/furfrou.png')
+        self.furfrouImg= image.load('img/furfrou.png')
         self.furfrouImg = transform.scale(self.furfrouImg,(self.furfrou.width,self.furfrou.height))
-        self.background = image.load('Proyecto_Final_TAD/img/fondo.jpg')
+        self.background = image.load('img/fondo.jpg')
         self.background = transform.scale(self.background,self.size)
-        self.github = image.load('Proyecto_Final_TAD/img/github.png')
-        self.github= transform.scale(self.github,(50,50))
+        self.github = image.load('img/github.jng')
+        self.github= transform.scale(self.github,(40,40))
 
 
 
@@ -126,7 +126,6 @@ class Interface:
         #self.draw_other_pokemons()()
         #self.draw_buttons()
         while True:
-            self.draw_footer()
             for e in event.get():
                 if e.type == QUIT:
                     sys.exit()
@@ -150,7 +149,8 @@ class Interface:
                 self.combo.draw()
                 self.comboIndice.draw()
                 self.opcion= self.combo.getIndex()  
-                self.indice = self.comboIndice.getIndex()             
+                self.indice = self.comboIndice.getIndex() 
+            self.draw_footer()            
             display.flip()
 
         
@@ -403,4 +403,5 @@ class Interface:
 
     def draw_footer(self):
         draw.rect(self.screen, self.BLUE,self.rectFooter,0)
-        self.screen.blit(self.github, (50,50))
+        draw.rect(self.screen,self.WHITE,self.rectGithub)
+        self.screen.blit(self.github,(self.rectGithub.x,self.rectGithub.y))
