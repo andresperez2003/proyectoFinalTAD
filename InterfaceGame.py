@@ -11,7 +11,7 @@ class Interface:
     GREY= (200,200,200)
     RED = (255,0,0)
     BLUE = (0,0,255)
-    size = (800,520)
+    size = (800,570)
 
     def __init__(self):
         init()
@@ -19,6 +19,9 @@ class Interface:
         self.myFontSmall = font.SysFont("Comic Sans Ms",15)
         self.valor=5
         self.control=True
+
+        self.flagEmpy=False
+
         self.widthPokemon= 60
         self.heigthPokemon=60
         #Posiciones solo para los pokemones
@@ -29,19 +32,23 @@ class Interface:
         self.otherBalbausur=Rect(315, 240, self.widthPokemon,self.heigthPokemon)
         self.otherCharmander=Rect(380,240, self.widthPokemon, self.heigthPokemon)
         self.otherSquirtle=Rect(455, 240, self.widthPokemon, self.heigthPokemon)
-        self.deleteFlag=True
-
+        self.deleteFlag=False
+        self.rectFooter=Rect(0,520, 800, 50)
         self.roserade = Rect(195,170,self.widthPokemon,self.heigthPokemon)
         self.charjabug= Rect(265,170,self.widthPokemon,self.heigthPokemon)
         self.cloyster = Rect(335,170,self.widthPokemon,self.heigthPokemon)
         self.furfrou = Rect(405,170,self.widthPokemon,self.heigthPokemon)
         self.quilladin = Rect(475,170,self.widthPokemon,self.heigthPokemon)
         self.bombirdier= Rect(545,170,self.widthPokemon,self.heigthPokemon)
-        self.combo_rect= Rect(220,90,250,50)
+        self.combo_rect= Rect(220,90,200,50)
         self.comboIndice_rect = Rect(530,90,100,50)
         self.screen = display.set_mode(self.size)
         self.instSll = SingleLinkedList()
         self.controlNoPress= True
+
+
+        self.alert = Rect(200,160,400, 100)
+        self.btnAlert = Rect(370,220,70,25)
 
         #Tamaño de lista de pokemones
         self.listPokemons= Rect(60,400,700,90)
@@ -67,6 +74,8 @@ class Interface:
         self.furfrouImg = transform.scale(self.furfrouImg,(self.furfrou.width,self.furfrou.height))
         self.background = image.load('Proyecto_Final_TAD/img/fondo.jpg')
         self.background = transform.scale(self.background,self.size)
+        self.github = image.load('Proyecto_Final_TAD/img/github.png')
+        self.github= transform.scale(self.github,(50,50))
 
 
 
@@ -114,32 +123,34 @@ class Interface:
 
 
     def init_screen(self):
-        #self.draw_other_pokemons()
+        #self.draw_other_pokemons()()
         #self.draw_buttons()
         while True:
+            self.draw_footer()
             for e in event.get():
                 if e.type == QUIT:
                     sys.exit()
             draw.rect(self.screen,(255,255,255),(0,0,800,520))
                     #Fondo
             """ self.screen.blit(self.background,(0,0)) """
+            self.draw_list_pokemons()
+            self.imprimir_pokemones()
             if(not self.touchUser):
                 self.draw_begin_pokemons()
                 self.draw_string()
                 self.add_begin_pokemon_end()
                 
             else:
+                if not self.combo.combo_open:
+                    self.press_aceptar() 
+                    self.draw_buttons() 
                 self.draw_string()
                 self.draw_other_pokemons()
-                self.add_other_pokemons()
+                self.add_other_pokemons() 
                 self.combo.draw()
                 self.comboIndice.draw()
                 self.opcion= self.combo.getIndex()  
-                self.indice = self.comboIndice.getIndex()  
-                self.draw_buttons()
-            self.press_aceptar()              
-            self.draw_list_pokemons()
-            self.imprimir_pokemones()
+                self.indice = self.comboIndice.getIndex()             
             display.flip()
 
         
@@ -207,9 +218,10 @@ class Interface:
 
     def draw_buttons(self):
         #Boton aceptar
-        draw.rect(self.screen,(70,189,34),self.btnAceptar,0)
-        texto= self.myFontSmall.render("Aceptar", True,(0,0,0))
-        self.screen.blit(texto,(350+(self.btnAceptar.width-texto.get_width())/2,330+(self.btnAceptar.height-texto.get_height())/2))
+        if not self.combo.combo_open:
+            draw.rect(self.screen,(70,189,34),self.btnAceptar,0)
+            texto= self.myFontSmall.render("Aceptar", True,(0,0,0))
+            self.screen.blit(texto,(350+(self.btnAceptar.width-texto.get_width())/2,330+(self.btnAceptar.height-texto.get_height())/2))
 
     def add_begin_pokemon_end(self):
         if(self.balbausur.collidepoint(mouse.get_pos())) and mouse.get_pressed()[0]:
@@ -229,7 +241,7 @@ class Interface:
 
 
     def add_other_pokemons(self):
-        if (self.opcion>0 and self.opcion<3) or self.opcion==8 or self.opcion==9:
+        if (self.opcion>0 and self.opcion<=2) or self.opcion==8 or self.opcion==9:
             if not self.combo.combo_open:
                 if(self.otherBalbausur.collidepoint(mouse.get_pos())) and mouse.get_pressed()[0]:
                     self.pokeName= self.pokedex[0][0]
@@ -275,12 +287,27 @@ class Interface:
                     self.give_valors_hover(self.roserade.x,self.roserade.y,self.widthPokemon,self.heigthPokemon)
                     self.deleteFlag=True
                 self.draw_hover(self.hoverPositionX,self.hovePositionY,self.hoverWidth,self.hoverHeigth)
-        if self.opcion>=3 and self.opcion<=6:
+
+        if self.opcion == 5 and self.deleteFlag:
+            self.operaciones[self.opcion]()
+            self.deleteFlag=False
+
+        if (self.opcion>=3 and self.opcion<5) or self.opcion==6:
+            
+            #Eliminar
             if self.deleteFlag:
-                self.operaciones[self.opcion]()
-                self.indices.pop()
-                self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
-                self.deleteFlag=False
+                if self.instSll.length != 0:
+                    self.operaciones[self.opcion]()
+                    if self.opcion == 6:
+                        self.indices.clear()
+                    else:
+                        self.indices.pop()
+                    self.deleteFlag=False
+                    self.flagEmpy=True
+                    self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
+                else :
+                    self.flagEmpy=True
+                    self.is_empy_nodes()
 
     def seleccionar_pokemon(self):
         #Eliminar en una posicion especifica
@@ -360,6 +387,20 @@ class Interface:
         self.hoverHeigth=heigth+10
         
 
+    def is_empy_nodes(self):
+        if self.flagEmpy:
+            draw.rect(self.screen,self.BLACK,self.alert,0,8)
+            draw.rect(self.screen,self.GREEN,self.btnAlert,0)
+            textoAlert= self.myFont.render(" ----  No hay pokemones para eliminar   ---- ", True,self.WHITE)
+            textoBtnAlert= self.myFont.render(" Ok", True,self.BLACK)
+            self.screen.blit(textoBtnAlert,(370+(self.btnAlert.width-textoBtnAlert.get_width())/2,220+(self.btnAlert.height-textoBtnAlert.get_height())/2))
+            self.screen.blit(textoAlert,(200+(self.alert.width-textoAlert.get_width())/2,140+(self.alert.height-textoAlert.get_height())/2))
+            if self.btnAlert.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
+                self.flagEmpy=False
 
 
 
+
+    def draw_footer(self):
+        draw.rect(self.screen, self.BLUE,self.rectFooter,0)
+        self.screen.blit(self.github, (50,50))
