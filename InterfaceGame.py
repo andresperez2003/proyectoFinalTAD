@@ -11,12 +11,14 @@ class Interface:
     GREY= (200,200,200)
     RED = (255,0,0)
     BLUE = (0,0,255)
-    size = (800,570)
+    size = (800,580)
 
     def __init__(self):
         init()
         self.myFont = font.SysFont("Comic Sans Ms",20)
-        self.myFontSmall = font.SysFont("Comic Sans Ms",15)
+        self.myFontTextCombo= font.SysFont("Comic Sans Ms", 16)
+        self.myFontSmall = font.SysFont("Comic Sans Ms",13)
+        self.myFontSuperSmall = font.SysFont("Comic Sans Ms",10)
         self.valor=5
         self.control=True
 
@@ -33,23 +35,23 @@ class Interface:
         self.otherCharmander=Rect(380,240, self.widthPokemon, self.heigthPokemon)
         self.otherSquirtle=Rect(455, 240, self.widthPokemon, self.heigthPokemon)
         self.deleteFlag=False
-        self.rectFooter=Rect(0,520, 800, 50)
+        self.rectFooter=Rect(0,520, 800, 60)
         self.roserade = Rect(195,170,self.widthPokemon,self.heigthPokemon)
         self.charjabug= Rect(265,170,self.widthPokemon,self.heigthPokemon)
         self.cloyster = Rect(335,170,self.widthPokemon,self.heigthPokemon)
         self.furfrou = Rect(405,170,self.widthPokemon,self.heigthPokemon)
         self.quilladin = Rect(475,170,self.widthPokemon,self.heigthPokemon)
         self.bombirdier= Rect(545,170,self.widthPokemon,self.heigthPokemon)
-        self.combo_rect= Rect(220,90,200,50)
-        self.comboIndice_rect = Rect(530,90,100,50)
+        self.combo_rect= Rect(220,110,200,50)
+        self.comboIndice_rect = Rect(530,110,100,50)
         self.screen = display.set_mode(self.size)
         self.instSll = SingleLinkedList()
         self.controlNoPress= True
-        self.rectGithub=Rect(700,530,40,40)
+        self.rectGithub=Rect(420,535,40,40)
 
         self.alert = Rect(200,160,400, 100)
         self.btnAlert = Rect(370,220,70,25)
-
+        self.rectUAM = Rect(670,520,40,40)
         #Tamaño de lista de pokemones
         self.listPokemons= Rect(60,400,700,90)
         self.pokeName=''
@@ -72,10 +74,12 @@ class Interface:
         self.bombirdierImg = transform.scale(self.bombirdierImg,(self.bombirdier.width,self.bombirdier.height))
         self.furfrouImg= image.load('img/furfrou.png')
         self.furfrouImg = transform.scale(self.furfrouImg,(self.furfrou.width,self.furfrou.height))
-        self.background = image.load('img/fondo.jpg')
-        self.background = transform.scale(self.background,self.size)
-        self.github = image.load('img/github.jng')
+        self.background = image.load('img/pokemon3.jpg')
+        self.background = transform.scale(self.background,(200,200))
+        self.github = image.load('img/github.jpg')
         self.github= transform.scale(self.github,(40,40))
+        self.UAMImg = image.load('img/UAM.jpg')
+        self.UAMImg = transform.scale(self.UAMImg,(120,60))
 
 
 
@@ -112,8 +116,8 @@ class Interface:
         self.indices =[]
         #Combobox
         self.screen.fill(self.GREY)
-        self.combo = ComboBox(self.screen,["Agregar al principio","Agregar al final","Eliminar primero", "Eliminar ultimo","Invertir","Eliminar todos","Eliminar por posicion","Agregar en una posicion", "Actualizar pokemon"],self.combo_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
-        self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
+        self.combo = ComboBox(self.screen,["Agregar al principio","Agregar al final","Eliminar primero", "Eliminar ultimo","Invertir","Eliminar todos","Eliminar por posicion","Agregar en una posicion", "Actualizar pokemon"],self.combo_rect,self.WHITE,"Arial",16,5,self.BLACK,self.BLACK,30,"Seleccione")
+        self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",16,5,self.BLACK,self.BLACK,30,"Seleccione")
         self.indice=0
         #Hover
         self.hoverPositionX=0
@@ -131,15 +135,16 @@ class Interface:
                     sys.exit()
             draw.rect(self.screen,(255,255,255),(0,0,800,520))
                     #Fondo
-            """ self.screen.blit(self.background,(0,0)) """
             self.draw_list_pokemons()
             self.imprimir_pokemones()
             if(not self.touchUser):
+                self.screen.blit(self.background,(320,-10))
                 self.draw_begin_pokemons()
                 self.draw_string()
                 self.add_begin_pokemon_end()
                 
             else:
+                self.screen.blit(self.background,(285,-10))
                 if not self.combo.combo_open:
                     self.press_aceptar() 
                     self.draw_buttons() 
@@ -201,15 +206,12 @@ class Interface:
             textoPrimeraSeleccion= self.myFont.render(" ----  Seleccione uno para iniciar   ---- ", True,(0,0,0))
             self.screen.blit(textoPrimeraSeleccion,(250,120))
         else:
-                textCombo = self.myFont.render(" Metodos", True,(0,0,0) )
-                self.screen.blit(textCombo,(130,99))
-                textComboIndice = self.myFont.render(" Indice", True,(0,0,0) )
-                self.screen.blit(textComboIndice,(440,99))
+                textCombo = self.myFontTextCombo.render(" Metodos", True,(0,0,0) )
+                self.screen.blit(textCombo,(140,123))
+                textComboIndice = self.myFontTextCombo.render(" Indice", True,(0,0,0) )
+                self.screen.blit(textComboIndice,(450,123))
         textoLista= self.myFont.render(" ----  Lista actual   ---- ", True,(0,0,0))
         self.screen.blit(textoLista,(70, 370))
-
-        
-
 
     def draw_list_pokemons(self):  
         draw.rect(self.screen,self.GREY,self.listPokemons)
@@ -236,9 +238,6 @@ class Interface:
                 self.instSll.create_node_sll_unshift(self.pokedex[2][0])
                 self.touchUser=True
                 self.indices.append("1")
-            
-                
-
 
     def add_other_pokemons(self):
         if (self.opcion>0 and self.opcion<=2) or self.opcion==8 or self.opcion==9:
@@ -304,7 +303,7 @@ class Interface:
                         self.indices.pop()
                     self.deleteFlag=False
                     self.flagEmpy=True
-                    self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
+                    self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",16,5,self.BLACK,self.BLACK,30,"Seleccione")
                 else :
                     self.flagEmpy=True
                     self.is_empy_nodes()
@@ -332,7 +331,7 @@ class Interface:
                     self.indices.append(str(self.instSll.length))
         
         #Refresacando el combo de los indices
-        self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",20,5,self.BLACK,self.BLACK,30,"Seleccione")
+        self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",16,5,self.BLACK,self.BLACK,30,"Seleccione")
     
     def imprimir_pokemones(self):
             self.valor=5
@@ -386,7 +385,6 @@ class Interface:
         self.hoverWidth=width+10
         self.hoverHeigth=heigth+10
         
-
     def is_empy_nodes(self):
         if self.flagEmpy:
             draw.rect(self.screen,self.BLACK,self.alert,0,8)
@@ -398,10 +396,13 @@ class Interface:
             if self.btnAlert.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
                 self.flagEmpy=False
 
-
-
-
     def draw_footer(self):
-        draw.rect(self.screen, self.BLUE,self.rectFooter,0)
-        draw.rect(self.screen,self.WHITE,self.rectGithub)
-        self.screen.blit(self.github,(self.rectGithub.x,self.rectGithub.y))
+        draw.rect(self.screen, self.BLACK,self.rectFooter,0)
+        draw.rect(self.screen,self.BLACK,self.rectGithub)
+        draw.rect(self.screen,self.BLACK,self.rectUAM)
+        self.screen.blit(self.UAMImg,(self.rectUAM.x, self.rectUAM.y))
+        self.screen.blit(self.github,(self.rectGithub.x,self.rectGithub.y-5))
+        textoGithub= self.myFontSmall.render("Desarrollado por Andres Perez", True, self.WHITE)
+        textoClass= self.myFontSuperSmall.render("Estructura de datos", True, self.WHITE)
+        self.screen.blit(textoGithub,(self.rectFooter.x+210, self.rectFooter.y+16))
+        self.screen.blit(textoClass,(self.rectFooter.x+260, self.rectFooter.y+31))
