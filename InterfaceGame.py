@@ -2,6 +2,7 @@ from pygame import *
 import sys
 from combo_box import ComboBox
 from single_linked_list import SingleLinkedList
+from menu import Menu
 class Interface:
 
         #Colores
@@ -15,26 +16,36 @@ class Interface:
 
     def __init__(self):
         init()
+        self.instSll = SingleLinkedList()
+        
         self.myFont = font.SysFont("Comic Sans Ms",20)
         self.myFontTextCombo= font.SysFont("Comic Sans Ms", 16)
         self.myFontSmall = font.SysFont("Comic Sans Ms",13)
         self.myFontSuperSmall = font.SysFont("Comic Sans Ms",10)
-        self.valor=5
-        self.control=True
 
+        #Configuracion de pantalla
+        self.screen = display.set_mode(self.size)
+
+
+        #Flags
+        self.control=True
         self.flagEmpy=False
+        self.deleteFlag=False
+        self.controlNoPress= True
+        self.touchUser = False
+
+
 
         self.widthPokemon= 60
         self.heigthPokemon=60
-        #Posiciones solo para los pokemones
-        self.balbausur= Rect(300,180,self.widthPokemon,self.heigthPokemon)
-        self.charmander= Rect(370,180,self.widthPokemon,self.heigthPokemon)
-        self.squirtle= Rect(440,180,self.widthPokemon,self.heigthPokemon)
+        self.valor=5
 
-        self.otherBalbausur=Rect(315, 240, self.widthPokemon,self.heigthPokemon)
-        self.otherCharmander=Rect(380,240, self.widthPokemon, self.heigthPokemon)
-        self.otherSquirtle=Rect(455, 240, self.widthPokemon, self.heigthPokemon)
-        self.deleteFlag=False
+
+
+
+
+
+        #Rectangulos
         self.rectFooter=Rect(0,520, 800, 60)
         self.roserade = Rect(195,170,self.widthPokemon,self.heigthPokemon)
         self.charjabug= Rect(265,170,self.widthPokemon,self.heigthPokemon)
@@ -42,19 +53,36 @@ class Interface:
         self.furfrou = Rect(405,170,self.widthPokemon,self.heigthPokemon)
         self.quilladin = Rect(475,170,self.widthPokemon,self.heigthPokemon)
         self.bombirdier= Rect(545,170,self.widthPokemon,self.heigthPokemon)
+        #Posiciones solo para los pokemones
+        self.rectGithub=Rect(420,535,40,40)
+        self.balbausur= Rect(320,220,self.widthPokemon,self.heigthPokemon)
+        self.charmander= Rect(390,220,self.widthPokemon,self.heigthPokemon)
+        self.squirtle= Rect(460,220,self.widthPokemon,self.heigthPokemon)
+
+        self.otherBalbausur=Rect(315, 240, self.widthPokemon,self.heigthPokemon)
+        self.otherCharmander=Rect(380,240, self.widthPokemon, self.heigthPokemon)
+        self.otherSquirtle=Rect(455, 240, self.widthPokemon, self.heigthPokemon)
         self.combo_rect= Rect(220,110,200,50)
         self.comboIndice_rect = Rect(530,110,100,50)
-        self.screen = display.set_mode(self.size)
-        self.instSll = SingleLinkedList()
-        self.controlNoPress= True
-        self.rectGithub=Rect(420,535,40,40)
-
         self.alert = Rect(200,160,400, 100)
         self.btnAlert = Rect(370,220,70,25)
         self.rectUAM = Rect(670,520,40,40)
+                #botones
+        self.btnAceptar= Rect(360,330,70,25)
         #Tamaño de lista de pokemones
         self.listPokemons= Rect(60,400,700,90)
+
+
+        #Navbar
+        self.RectSll= Rect(0,0,200,40)
+        self.RectDLL= Rect(200,0,200,40)
+        self.RectTree = Rect(400,0,200,40)
+        self.RectGraph = Rect(600,0,200,40)
+
+
         self.pokeName=''
+        self.opcion=0
+
         #Cargando imagenes pokemones iniciales
         self.charmanderImg= image.load('img/charmander.png')
         self.charmanderImg = transform.scale(self.charmanderImg,(self.charmander.width,self.charmander.height))
@@ -75,7 +103,7 @@ class Interface:
         self.furfrouImg= image.load('img/furfrou.png')
         self.furfrouImg = transform.scale(self.furfrouImg,(self.furfrou.width,self.furfrou.height))
         self.background = image.load('img/pokemon3.jpg')
-        self.background = transform.scale(self.background,(200,200))
+        self.background = transform.scale(self.background,(160,40))
         self.github = image.load('img/github.jpg')
         self.github= transform.scale(self.github,(40,40))
         self.UAMImg = image.load('img/UAM.jpg')
@@ -93,7 +121,7 @@ class Interface:
             ("Furfrou", self.furfrouImg),
             ("Quilladin", self.quilladinImg),
             ("Roserade", self.roseradeImg)]
-        self.listPokemon=[]
+
 
         self.operaciones={
             1:self.instSll.create_node_sll_unshift,
@@ -108,17 +136,16 @@ class Interface:
             10:""" Comprobar si la lista simplemente esta vacio si el usuario desea eliminar """
         }
 
-
-        #botones
-        self.btnAceptar= Rect(350,330,70,25)
-        self.opcion=0
-        self.touchUser = False
         self.indices =[]
+        self.listPokemon=[]
+
         #Combobox
         self.screen.fill(self.GREY)
         self.combo = ComboBox(self.screen,["Agregar al principio","Agregar al final","Eliminar primero", "Eliminar ultimo","Invertir","Eliminar todos","Eliminar por posicion","Agregar en una posicion", "Actualizar pokemon"],self.combo_rect,self.WHITE,"Arial",16,5,self.BLACK,self.BLACK,30,"Seleccione")
         self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",16,5,self.BLACK,self.BLACK,30,"Seleccione")
+        self.main_menu = Menu(self.screen, {"SLL": "img/lista.png", "DLL": "img/lista.png", "Pilas y colas": "img/lista.png", "Árboles": "img/arbol.png", "Grafos": "img/grafos.png"}, self.GREY, 40, "Arial", 16, self.BLACK)
         self.indice=0
+
         #Hover
         self.hoverPositionX=0
         self.hovePositionY=0
@@ -133,28 +160,39 @@ class Interface:
             for e in event.get():
                 if e.type == QUIT:
                     sys.exit()
-            draw.rect(self.screen,(255,255,255),(0,0,800,520))
-                    #Fondo
-            self.draw_list_pokemons()
-            self.imprimir_pokemones()
-            if(not self.touchUser):
-                self.screen.blit(self.background,(320,-10))
-                self.draw_begin_pokemons()
-                self.draw_string()
-                self.add_begin_pokemon_end()
                 
-            else:
-                self.screen.blit(self.background,(285,-10))
-                if not self.combo.combo_open:
-                    self.press_aceptar() 
-                    self.draw_buttons() 
-                self.draw_string()
-                self.draw_other_pokemons()
-                self.add_other_pokemons() 
-                self.combo.draw()
-                self.comboIndice.draw()
-                self.opcion= self.combo.getIndex()  
-                self.indice = self.comboIndice.getIndex() 
+                if(self.main_menu.getSelectedOption() == 0):
+                    draw.rect(self.screen,(255,255,255),(0,0,800,520))
+                    #Fondo
+                    self.draw_list_pokemons()
+                    self.imprimir_pokemones()
+                    if(not self.touchUser):
+                        self.screen.blit(self.background,(340,120))
+                        self.draw_begin_pokemons()
+                        self.draw_string()
+                        self.add_begin_pokemon_end()
+                        
+                    else:
+                        print("hola")
+                        if not self.combo.combo_open:
+                            self.press_aceptar() 
+                            self.draw_buttons() 
+                        self.draw_string()
+                        self.draw_other_pokemons()
+                        self.add_other_pokemons() 
+                        self.combo.draw()
+                        self.comboIndice.draw()
+                        self.opcion= self.combo.getIndex()  
+                        self.indice = self.comboIndice.getIndex() 
+                elif(self.main_menu.getSelectedOption() == 1):
+                    draw.rect(self.screen, self.GREEN, (0, 40, self.screen.get_width(), self.screen.get_height() - 40))
+                elif(self.main_menu.getSelectedOption() == 2):
+                    draw.rect(self.screen, (250, 10, 20), (0, 40, self.screen.get_width(), self.screen.get_height() - 40))
+                elif(self.main_menu.getSelectedOption() == 3):
+                    draw.rect(self.screen, self.BLUE, (0, 40, self.screen.get_width(), self.screen.get_height() - 40))
+                elif(self.main_menu.getSelectedOption() == 4):
+                    draw.rect(self.screen, (200, 100,60), (0, 40, self.screen.get_width(), self.screen.get_height() - 40))
+            self.main_menu.draw()
             self.draw_footer()            
             display.flip()
 
@@ -184,7 +222,6 @@ class Interface:
         draw.rect(self.screen,self.WHITE,self.otherBalbausur)
         draw.rect(self.screen,self.WHITE,self.otherCharmander)
         draw.rect(self.screen,self.WHITE,self.otherSquirtle)
-
         self.render_other_pokemons()
 
 
@@ -204,7 +241,7 @@ class Interface:
     def draw_string(self): 
         if(not self.touchUser):
             textoPrimeraSeleccion= self.myFont.render(" ----  Seleccione uno para iniciar   ---- ", True,(0,0,0))
-            self.screen.blit(textoPrimeraSeleccion,(250,120))
+            self.screen.blit(textoPrimeraSeleccion,(250,160))
         else:
                 textCombo = self.myFontTextCombo.render(" Metodos", True,(0,0,0) )
                 self.screen.blit(textCombo,(140,123))
@@ -223,7 +260,7 @@ class Interface:
         if not self.combo.combo_open:
             draw.rect(self.screen,(70,189,34),self.btnAceptar,0)
             texto= self.myFontSmall.render("Aceptar", True,(0,0,0))
-            self.screen.blit(texto,(350+(self.btnAceptar.width-texto.get_width())/2,330+(self.btnAceptar.height-texto.get_height())/2))
+            self.screen.blit(texto,(360+(self.btnAceptar.width-texto.get_width())/2,330+(self.btnAceptar.height-texto.get_height())/2))
 
     def add_begin_pokemon_end(self):
         if(self.balbausur.collidepoint(mouse.get_pos())) and mouse.get_pressed()[0]:
@@ -337,31 +374,31 @@ class Interface:
             self.valor=5
             for poke in range(1,self.instSll.length+1):
                 if self.instSll.get_node_value(poke) == 'Balbausur':
-                    self.screen.blit(self.pokedex[0][1],(self.listPokemons.x+self.valor,245+(self.listPokemons.y- self.heigthPokemon)/2))
+                    self.screen.blit(self.pokedex[0][1],(self.listPokemons.x+self.valor,260+(self.listPokemons.y- self.heigthPokemon)/2))
                     self.valor+=90
                 if self.instSll.get_node_value(poke) == 'Charmander':
-                    self.screen.blit(self.pokedex[1][1],(self.listPokemons.x+self.valor,245+(self.listPokemons.y- self.heigthPokemon)/2))
+                    self.screen.blit(self.pokedex[1][1],(self.listPokemons.x+self.valor,260+(self.listPokemons.y- self.heigthPokemon)/2))
                     self.valor+=90
                 if self.instSll.get_node_value(poke) == 'Squirtle':
-                    self.screen.blit(self.pokedex[2][1],(self.listPokemons.x+self.valor,245+(self.listPokemons.y- self.heigthPokemon)/2))
+                    self.screen.blit(self.pokedex[2][1],(self.listPokemons.x+self.valor,260+(self.listPokemons.y- self.heigthPokemon)/2))
                     self.valor+=90
                 if self.instSll.get_node_value(poke) == 'Bombardier':
-                    self.screen.blit(self.pokedex[3][1],(self.listPokemons.x+self.valor,245+(self.listPokemons.y - self.heigthPokemon)/2))
+                    self.screen.blit(self.pokedex[3][1],(self.listPokemons.x+self.valor,260+(self.listPokemons.y - self.heigthPokemon)/2))
                     self.valor+=90
                 if self.instSll.get_node_value(poke)=='Charjabug':
-                    self.screen.blit(self.pokedex[4][1],(self.listPokemons.x + self.valor, 245+(self.listPokemons.y-self.heigthPokemon)/2))
+                    self.screen.blit(self.pokedex[4][1],(self.listPokemons.x + self.valor, 260+(self.listPokemons.y-self.heigthPokemon)/2))
                     self.valor+=90
                 if self.instSll.get_node_value(poke) == 'Cloyster':
                     self.screen.blit(self.pokedex[5][1], (self.listPokemons.x+self.valor, 245+(self.listPokemons.y-self.heigthPokemon)/2))
                     self.valor+=90
                 if self.instSll.get_node_value(poke)== 'Furfrou':
-                    self.screen.blit(self.pokedex[6][1], (self.listPokemons.x+ self.valor, 245+(self.listPokemons.y- self.heigthPokemon)/2))
+                    self.screen.blit(self.pokedex[6][1], (self.listPokemons.x+ self.valor, 260+(self.listPokemons.y- self.heigthPokemon)/2))
                     self.valor+=90
                 if self.instSll.get_node_value(poke) == 'Quilladin':
-                    self.screen.blit(self.pokedex[7][1], (self.listPokemons.x + self.valor, 245+(self.listPokemons.y - self.heigthPokemon)/2))
+                    self.screen.blit(self.pokedex[7][1], (self.listPokemons.x + self.valor, 260+(self.listPokemons.y - self.heigthPokemon)/2))
                     self.valor+=90
                 if self.instSll.get_node_value(poke) == 'Roserade':
-                    self.screen.blit(self.pokedex[8][1],(self.listPokemons.x+self.valor,245+(self.listPokemons.y-self.heigthPokemon)/2))
+                    self.screen.blit(self.pokedex[8][1],(self.listPokemons.x+self.valor,260+(self.listPokemons.y-self.heigthPokemon)/2))
                     self.valor+=90
                 
     def press_aceptar(self):
@@ -406,3 +443,6 @@ class Interface:
         textoClass= self.myFontSuperSmall.render("Estructura de datos", True, self.WHITE)
         self.screen.blit(textoGithub,(self.rectFooter.x+210, self.rectFooter.y+16))
         self.screen.blit(textoClass,(self.rectFooter.x+260, self.rectFooter.y+31))
+
+
+        
