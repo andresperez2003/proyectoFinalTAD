@@ -105,7 +105,6 @@ class SingleLinkedList:
             self.length -= 1
         else:
             remove_node = self.head
-            print(f'Valor del nodo a eliminar es: {remove_node.value}')
             self.head = remove_node.next
             self.length -=1
 

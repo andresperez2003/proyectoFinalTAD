@@ -25,8 +25,8 @@ class ComboBox():
     def draw(self):
         
         self.clickOnInitialRect()
-        self.clickOutOfCombo()
         self.drawSelectedOption()
+        self.clickOutOfCombo()
         if self.combo_open:
             pygame.draw.rect(self.screen, self.background_color, self.combo_rect, 0, self.border_radius)
             gap = 0
@@ -41,7 +41,6 @@ class ComboBox():
     
     def clickOnInitialRect(self):
         if self.rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0] == True:
-            self.finish=False
             self.combo_open = True
     
     def clickOutOfCombo(self):
