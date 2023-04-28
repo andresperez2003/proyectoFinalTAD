@@ -162,8 +162,8 @@ class Interface:
                     sys.exit()
                 
                 if(self.main_menu.getSelectedOption() == 0):
+                        #Fondo
                     draw.rect(self.screen,(255,255,255),(0,0,800,520))
-                    #Fondo
                     self.draw_list_pokemons()
                     self.imprimir_pokemones()
                     if(not self.touchUser):
@@ -192,9 +192,9 @@ class Interface:
                     draw.rect(self.screen, self.BLUE, (0, 40, self.screen.get_width(), self.screen.get_height() - 40))
                 elif(self.main_menu.getSelectedOption() == 4):
                     draw.rect(self.screen, (200, 100,60), (0, 40, self.screen.get_width(), self.screen.get_height() - 40))
-            self.main_menu.draw()
-            self.draw_footer()            
-            display.flip()
+                self.main_menu.draw()
+                self.draw_footer()            
+                display.flip()
 
         
     #Dibujar las imagenes de los pokemones iniciales
@@ -402,7 +402,6 @@ class Interface:
                     self.valor+=90
                 
     def press_aceptar(self):
-        event.wait()
         if(self.btnAceptar.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]):
             if((self.opcion>0 and self.opcion<3) or self.opcion>=7 and self.opcion <=9):
                 self.seleccionar_pokemon()
