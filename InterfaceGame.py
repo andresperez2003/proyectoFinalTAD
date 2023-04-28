@@ -161,40 +161,41 @@ class Interface:
                 if e.type == QUIT:
                     sys.exit()
                 
-                if(self.main_menu.getSelectedOption() == 0):
-                    draw.rect(self.screen,(255,255,255),(0,0,800,520))
+                """ if(self.main_menu.getSelectedOption() == 0):
+                    """
                     #Fondo
-                    self.draw_list_pokemons()
-                    self.imprimir_pokemones()
-                    if(not self.touchUser):
-                        self.screen.blit(self.background,(340,120))
-                        self.draw_begin_pokemons()
-                        self.draw_string()
-                        self.add_begin_pokemon_end()
-                        
-                    else:
-                        print("hola")
-                        if not self.combo.combo_open:
-                            self.press_aceptar() 
-                            self.draw_buttons() 
-                        self.draw_string()
-                        self.draw_other_pokemons()
-                        self.add_other_pokemons() 
-                        self.combo.draw()
-                        self.comboIndice.draw()
-                        self.opcion= self.combo.getIndex()  
-                        self.indice = self.comboIndice.getIndex() 
-                elif(self.main_menu.getSelectedOption() == 1):
+                draw.rect(self.screen,(255,255,255),(0,0,800,520))
+                self.draw_list_pokemons()
+                self.imprimir_pokemones()
+                if(not self.touchUser):
+                    self.screen.blit(self.background,(340,120))
+                    self.draw_begin_pokemons()
+                    self.draw_string()
+                    self.add_begin_pokemon_end()
+                    
+                else:
+                    print("hola")
+                    if not self.combo.combo_open:
+                        self.press_aceptar() 
+                        self.draw_buttons() 
+                    self.draw_string()
+                    self.draw_other_pokemons()
+                    self.add_other_pokemons() 
+                    self.combo.draw()
+                    self.comboIndice.draw()
+                    self.opcion= self.combo.getIndex()  
+                    self.indice = self.comboIndice.getIndex() 
+                """ elif(self.main_menu.getSelectedOption() == 1):
                     draw.rect(self.screen, self.GREEN, (0, 40, self.screen.get_width(), self.screen.get_height() - 40))
                 elif(self.main_menu.getSelectedOption() == 2):
                     draw.rect(self.screen, (250, 10, 20), (0, 40, self.screen.get_width(), self.screen.get_height() - 40))
                 elif(self.main_menu.getSelectedOption() == 3):
                     draw.rect(self.screen, self.BLUE, (0, 40, self.screen.get_width(), self.screen.get_height() - 40))
                 elif(self.main_menu.getSelectedOption() == 4):
-                    draw.rect(self.screen, (200, 100,60), (0, 40, self.screen.get_width(), self.screen.get_height() - 40))
-            self.main_menu.draw()
-            self.draw_footer()            
-            display.flip()
+                    draw.rect(self.screen, (200, 100,60), (0, 40, self.screen.get_width(), self.screen.get_height() - 40)) """
+                self.main_menu.draw()
+                self.draw_footer()            
+                display.flip()
 
         
     #Dibujar las imagenes de los pokemones iniciales
@@ -402,7 +403,6 @@ class Interface:
                     self.valor+=90
                 
     def press_aceptar(self):
-        event.wait()
         if(self.btnAceptar.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]):
             if((self.opcion>0 and self.opcion<3) or self.opcion>=7 and self.opcion <=9):
                 self.seleccionar_pokemon()
