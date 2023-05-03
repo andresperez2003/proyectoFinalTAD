@@ -206,3 +206,35 @@ class SingleLinkedList:
         search_node = self.get_node(index)
         if search_node != None:
             search_node.value = new_value
+    
+    def count_duplicates(self,value):
+            current_node = self.head
+            node_counter = 0
+            while(current_node != None):
+                if current_node.value == value:
+                    node_counter+=1
+                current_node = current_node.next
+            return node_counter
+    
+    def delete_all_duplicated(self,value):
+            print(value)
+            count = self.count_duplicates(value)
+            if count>1:
+                while count>0:
+                    self.remove_node_by_value(value)
+                    count-=1
+
+
+    def remove_node_by_value(self,data):
+        if self.head == None:
+            return 
+        if self.head.value == data:
+            self.shift_node_sll()
+        else:
+            current = self.head
+            index=1
+            while current is not None:
+                if current.value == data:
+                        self.remove_node(index)
+                index+=1
+                current=current.next

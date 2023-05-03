@@ -111,37 +111,17 @@ class Interface:
 
 
 
-        self.pokedex= [
-            ("Balbausur",self.balbausurImg),
-            ("Charmander",self.charmanderImg),
-            ("Squirtle",self.squirtleImg),
-            ("Bombardier", self.bombirdierImg),
-            ("Charjabug", self.charjabugImg),
-            ("Cloyster", self.cloysterImg),
-            ("Furfrou", self.furfrouImg),
-            ("Quilladin", self.quilladinImg),
-            ("Roserade", self.roseradeImg)]
+        self.pokedex= [("Balbausur",self.balbausurImg),("Charmander",self.charmanderImg),("Squirtle",self.squirtleImg),("Bombardier", self.bombirdierImg),("Charjabug", self.charjabugImg),("Cloyster", self.cloysterImg),("Furfrou", self.furfrouImg),("Quilladin", self.quilladinImg),("Roserade", self.roseradeImg)]
 
 
-        self.operaciones={
-            1:self.instSll.create_node_sll_unshift,
-            2:self.instSll.crear_node_sll_ends,
-            3:self.instSll.shift_node_sll,
-            4:self.instSll.delete_node_sll_pop,
-            5:self.instSll.reverse,
-            6:self.instSll.delete_list,
-            7:self.instSll.remove_node,
-            8:self.instSll.add_node,
-            9:self.instSll.update_node_value,
-            10:""" Comprobar si la lista simplemente esta vacio si el usuario desea eliminar """
-        }
+        self.operaciones={1:self.instSll.create_node_sll_unshift,2:self.instSll.crear_node_sll_ends,3:self.instSll.shift_node_sll,4:self.instSll.delete_node_sll_pop,5:self.instSll.reverse,6:self.instSll.delete_list,7:self.instSll.remove_node,8:self.instSll.add_node,9:self.instSll.update_node_value,10:self.instSll.delete_all_duplicated}
 
         self.indices =[]
         self.listPokemon=[]
 
         #Combobox
         self.screen.fill(self.GREY)
-        self.combo = ComboBox(self.screen,["Agregar al principio","Agregar al final","Eliminar primero", "Eliminar ultimo","Invertir","Eliminar todos","Eliminar por posicion","Agregar en una posicion", "Actualizar pokemon"],self.combo_rect,self.WHITE,"Arial",16,5,self.BLACK,self.BLACK,30,"Seleccione")
+        self.combo = ComboBox(self.screen,["Agregar al principio","Agregar al final","Eliminar primero", "Eliminar ultimo","Invertir","Eliminar todos","Eliminar por posicion","Agregar en una posicion", "Actualizar pokemon","Eliminar duplicados"],self.combo_rect,self.WHITE,"Arial",16,5,self.BLACK,self.BLACK,30,"Seleccione")
         self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",16,5,self.BLACK,self.BLACK,30,"Seleccione")
         self.main_menu = Menu(self.screen, {"SLL": "img/lista.png", "DLL": "img/lista.png", "Pilas y colas": "img/lista.png", "Árboles": "img/arbol.png", "Grafos": "img/grafos.png"}, self.GREY, 40, "Arial", 16, self.BLACK)
         self.indice=0
@@ -173,7 +153,6 @@ class Interface:
                         self.add_begin_pokemon_end()
                         
                     else:
-                        print("hola")
                         if not self.combo.combo_open:
                             self.press_aceptar() 
                             self.draw_buttons() 
@@ -193,7 +172,7 @@ class Interface:
                 elif(self.main_menu.getSelectedOption() == 4):
                     draw.rect(self.screen, (200, 100,60), (0, 40, self.screen.get_width(), self.screen.get_height() - 40))
                 self.main_menu.draw()
-                self.draw_footer()            
+                self.draw_footer()   
                 display.flip()
 
         
@@ -277,7 +256,7 @@ class Interface:
                 self.indices.append("1")
 
     def add_other_pokemons(self):
-        if (self.opcion>0 and self.opcion<=2) or self.opcion==8 or self.opcion==9:
+        if (self.opcion>0 and self.opcion<=2) or self.opcion==8 or self.opcion==9 or self.opcion==10:
             if not self.combo.combo_open:
                 if(self.otherBalbausur.collidepoint(mouse.get_pos())) and mouse.get_pressed()[0]:
                     self.pokeName= self.pokedex[0][0]
@@ -328,6 +307,7 @@ class Interface:
             self.operaciones[self.opcion]()
             self.deleteFlag=False
 
+
         if (self.opcion>=3 and self.opcion<5) or self.opcion==6:
             
             #Eliminar
@@ -343,16 +323,26 @@ class Interface:
                     self.comboIndice = ComboBox(self.screen,self.indices,self.comboIndice_rect,self.WHITE,"Arial",16,5,self.BLACK,self.BLACK,30,"Seleccione")
                 else :
                     self.flagEmpy=True
-                    self.is_empy_nodes()
+
 
     def seleccionar_pokemon(self):
+
         #Eliminar en una posicion especifica
         if self.indice>0 and self.opcion == 7:
             self.operaciones[self.opcion](self.indice)
             self.indices.pop()
+
+        #Eliminar repetidos
+        if self.opcion == 10 :
+            print("Entra")
+            print("Entra")
+            print("Entra")
+            print("Entra")
+            self.operaciones[self.opcion](self.pokeName)
         
         #Agregar en una posicion especifica
         if self.indice >0 and self.opcion==8:
+
             self.operaciones[self.opcion](self.indice,self.pokeName)
             self.indices.append(str(self.instSll.length))
 
@@ -363,7 +353,7 @@ class Interface:
         #Agregar pokemones
         if self.opcion> 0 and self.opcion<3:
             for name in self.pokedex:
-                if self.pokeName == name[0] and self.deleteFlag:
+                if self.pokeName == name[0] and self.deleteFlag and self.instSll.length < 8:
                     self.operaciones[self.opcion](name[0])
                     self.indices.append(str(self.instSll.length))
         
@@ -374,41 +364,33 @@ class Interface:
             self.valor=5
             for poke in range(1,self.instSll.length+1):
                 if self.instSll.get_node_value(poke) == 'Balbausur':
-                    self.screen.blit(self.pokedex[0][1],(self.listPokemons.x+self.valor,260+(self.listPokemons.y- self.heigthPokemon)/2))
-                    self.valor+=90
+                    self.screen.blit(self.pokedex[0][1],(self.listPokemons.x+self.valor,250+(self.listPokemons.y- self.heigthPokemon)/2))
                 if self.instSll.get_node_value(poke) == 'Charmander':
-                    self.screen.blit(self.pokedex[1][1],(self.listPokemons.x+self.valor,260+(self.listPokemons.y- self.heigthPokemon)/2))
-                    self.valor+=90
+                    self.screen.blit(self.pokedex[1][1],(self.listPokemons.x+self.valor,250+(self.listPokemons.y- self.heigthPokemon)/2))
                 if self.instSll.get_node_value(poke) == 'Squirtle':
-                    self.screen.blit(self.pokedex[2][1],(self.listPokemons.x+self.valor,260+(self.listPokemons.y- self.heigthPokemon)/2))
-                    self.valor+=90
+                    self.screen.blit(self.pokedex[2][1],(self.listPokemons.x+self.valor,250+(self.listPokemons.y- self.heigthPokemon)/2))
                 if self.instSll.get_node_value(poke) == 'Bombardier':
-                    self.screen.blit(self.pokedex[3][1],(self.listPokemons.x+self.valor,260+(self.listPokemons.y - self.heigthPokemon)/2))
-                    self.valor+=90
+                    self.screen.blit(self.pokedex[3][1],(self.listPokemons.x+self.valor,250+(self.listPokemons.y - self.heigthPokemon)/2))
                 if self.instSll.get_node_value(poke)=='Charjabug':
-                    self.screen.blit(self.pokedex[4][1],(self.listPokemons.x + self.valor, 260+(self.listPokemons.y-self.heigthPokemon)/2))
-                    self.valor+=90
+                    self.screen.blit(self.pokedex[4][1],(self.listPokemons.x + self.valor, 250+(self.listPokemons.y-self.heigthPokemon)/2))
                 if self.instSll.get_node_value(poke) == 'Cloyster':
-                    self.screen.blit(self.pokedex[5][1], (self.listPokemons.x+self.valor, 245+(self.listPokemons.y-self.heigthPokemon)/2))
-                    self.valor+=90
+                    self.screen.blit(self.pokedex[5][1], (self.listPokemons.x+self.valor, 250+(self.listPokemons.y-self.heigthPokemon)/2))
                 if self.instSll.get_node_value(poke)== 'Furfrou':
-                    self.screen.blit(self.pokedex[6][1], (self.listPokemons.x+ self.valor, 260+(self.listPokemons.y- self.heigthPokemon)/2))
-                    self.valor+=90
+                    self.screen.blit(self.pokedex[6][1], (self.listPokemons.x+ self.valor, 250+(self.listPokemons.y- self.heigthPokemon)/2))
                 if self.instSll.get_node_value(poke) == 'Quilladin':
-                    self.screen.blit(self.pokedex[7][1], (self.listPokemons.x + self.valor, 260+(self.listPokemons.y - self.heigthPokemon)/2))
-                    self.valor+=90
+                    self.screen.blit(self.pokedex[7][1], (self.listPokemons.x + self.valor, 250+(self.listPokemons.y - self.heigthPokemon)/2))
                 if self.instSll.get_node_value(poke) == 'Roserade':
-                    self.screen.blit(self.pokedex[8][1],(self.listPokemons.x+self.valor,260+(self.listPokemons.y-self.heigthPokemon)/2))
-                    self.valor+=90
+                    self.screen.blit(self.pokedex[8][1],(self.listPokemons.x+self.valor,250+(self.listPokemons.y-self.heigthPokemon)/2))
+                self.valor+=90
                 
     def press_aceptar(self):
         if(self.btnAceptar.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]):
-            if((self.opcion>0 and self.opcion<3) or self.opcion>=7 and self.opcion <=9):
+            if((self.opcion>0 and self.opcion<3) or (self.opcion>=7 and self.opcion <= 10) ):
+                print(self.opcion)
                 self.seleccionar_pokemon()
                 self.deleteFlag=False
             else: self.deleteFlag=True
             self.give_valors_hover(0,0,0,0)
-            self.instSll.show_list()
 
     def draw_hover(self, positionX, positionY, width, heigth):
         if not self.combo.combo_open:
@@ -421,16 +403,6 @@ class Interface:
         self.hoverWidth=width+10
         self.hoverHeigth=heigth+10
         
-    def is_empy_nodes(self):
-        if self.flagEmpy:
-            draw.rect(self.screen,self.BLACK,self.alert,0,8)
-            draw.rect(self.screen,self.GREEN,self.btnAlert,0)
-            textoAlert= self.myFont.render(" ----  No hay pokemones para eliminar   ---- ", True,self.WHITE)
-            textoBtnAlert= self.myFont.render(" Ok", True,self.BLACK)
-            self.screen.blit(textoBtnAlert,(370+(self.btnAlert.width-textoBtnAlert.get_width())/2,220+(self.btnAlert.height-textoBtnAlert.get_height())/2))
-            self.screen.blit(textoAlert,(200+(self.alert.width-textoAlert.get_width())/2,140+(self.alert.height-textoAlert.get_height())/2))
-            if self.btnAlert.collidepoint(mouse.get_pos()) and mouse.get_pressed()[0]:
-                self.flagEmpy=False
 
     def draw_footer(self):
         draw.rect(self.screen, self.BLACK,self.rectFooter,0)

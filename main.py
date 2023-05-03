@@ -4,4 +4,4 @@ from InterfaceGame import Interface
 
 
 instInterface = Interface()
-instInterface.init_screen()
+instInterface.init_screen() 
